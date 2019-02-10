@@ -9,6 +9,9 @@
 </head>
 
 <body>
+
+<div class="centralCircle" id="centralCircle"></div>
+
 <style>
 html,
 body {
@@ -19,17 +22,17 @@ height: 100%;
 body {
 background: #efefef;
 }
-.circle {
+.centralCircle {
 background: #444;
 position: absolute;
 width: 30px;
 height: 30px;
 border-radius: 30px;
-/* top: 0;
+top: 0;
  right: 0;
  bottom: 0;
  left: 0;
- margin: auto; */
+ margin: auto;
 }
 .circle-shadow {
 background: rgb(0, 0, 0);
@@ -48,7 +51,74 @@ transition: all .3s;
 }
 </style>
 
+
+<canvas id="canvas" width="1200" height="500"></canvas>
+
+   <script>
+
+     var Ball = function () {
+        this.x = 600;
+        this.y = 350;
+        this.xSpeed = -2;
+        this.ySpeed = 3;
+ 
+        };
+
+        var circle = function (x, y, radius, fillCircle) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2, false);
+            if (fillCircle) {
+                ctx.fill();
+            }
+            else {
+                ctx.stroke();
+            }
+        };
+
+        Ball.prototype.draw = function () {
+            circle(this.x, this.y, 15, true);
+        };
+
+        Ball.prototype.move = function () {
+            this.x += this.xSpeed;
+            this.y += this.ySpeed;
+        };
+
+        Ball.prototype.checkCollision = function () {
+            if (this.x < 0 || this.x > width) {
+                this.xSpeed = -this.xSpeed;
+            }
+            if (this.y < 0 || this.y > height) {
+                this.ySpeed = -this.ySpeed;
+            }
+        };
+
+        var centralCircle = document.getElementById("centralCircle");
+
+        var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+            var ball = new Ball();
+            ball.draw();
+            var width = canvas.width;
+            var height = canvas.height;
+
+        window.onclick = function(){          
+                setInterval(function () {
+                    ctx.clearRect(0, 0, width, height);
+                    ball.draw();
+                    ball.move();
+                    ball.checkCollision();
+                    ctx.strokeRect(0, 0, width, height);
+                 }, 30);         
+        }
+
+   </script>
+
+
+<!-- 
 <script src="./Тестовое задание_files/jquery-2.2.4.min.js.Без названия" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<canvas id="canvas" width="900" height="900"></canvas>
+
 
 <script>
  
@@ -82,7 +152,30 @@ $(window).on("mousemove", function (document) {
     })();
     });
 });
-</script>
+
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
+var y = 10;
+var x = 250;
+
+function drawBall(){
+    ctx.clearRect(0,0,900,900);
+    y += 1;
+    ctx.fillStyle="black";
+
+    ctx.beginPath();
+    ctx.arc(x,y,30,0,Math.PI*2,true);
+
+    ctx.closePath();
+    ctx.fill();
+
+    setInterval(drawBall,10);
+}
+
+drawBall();
+
+</script> -->
 
 </body>
 
