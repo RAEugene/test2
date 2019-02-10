@@ -16,12 +16,24 @@
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 40px;
-      height: 40px;
+      width: 30px;
+      height: 30px;
       transition: all 1s;
       background-color: black;
       border-radius: 50%;
     }
+
+    #centralBall {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 30px;
+      height: 30px;
+      transition: all 1s;
+      background-color: black;
+      border-radius: 50%;
+    }
+
   </style>
 </head>
 
@@ -29,6 +41,7 @@
 
   <div id="field">
     <div id="ball"></div> 
+    <div id="centralBall"></div>
   </div>
 
   <script>
@@ -72,9 +85,31 @@
         ballCoords.top = field.clientHeight - ball.clientHeight;
       }
 
+      function old() {
+        var oldCoords={};
+        t();
+        function t(){
+            oldCoords.left = ball.style.left;
+            oldCoords.top = ball.style.top;
+          }
+        }
+      }
+      old();
+
+
       ball.style.left = ballCoords.left + 'px';
       ball.style.top = ballCoords.top + 'px';
+
+      function func() {
+        ball.style.left = oldCoords.left;
+        ball.style.top = oldCoords.top;
+      }
+
+      setTimeout(func, 1000);
     }
+
+
+
   </script>
 
 </body>
