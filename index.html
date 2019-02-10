@@ -1,181 +1,81 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Тестовое задание</title>
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
- 
+  <meta charset="utf-8">
+  <style>
+    #field {
+      width: 100%;
+      height: 100%; 
+      background-color: rgb(255, 255, 255);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    #ball {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 40px;
+      height: 40px;
+      transition: all 1s;
+      background-color: black;
+      border-radius: 50%;
+    }
+  </style>
 </head>
 
-<body>
+<body style="height:700px">
 
-<div class="centralCircle" id="centralCircle"></div>
+  <div id="field">
+    <div id="ball"></div> 
+  </div>
 
-<style>
-html,
-body {
-overflow: hidden;
-width: 100%;
-height: 100%;
-}
-body {
-background: #efefef;
-}
-.centralCircle {
-background: #444;
-position: absolute;
-width: 30px;
-height: 30px;
-border-radius: 30px;
-top: 0;
- right: 0;
- bottom: 0;
- left: 0;
- margin: auto;
-}
-.circle-shadow {
-background: rgb(0, 0, 0);
-position: absolute;
-width: 30px;
-height: 30px;
-border-radius: 30px;
-top: 0;
-right: 0;
-bottom: 0;
-left: 0;
-margin: auto;
-}
-.transition {
-transition: all .3s;
-}
-</style>
+  <script>
+    var field = document.getElementById('field');
+    var ball = document.getElementById('ball');
+
+    field.onclick = function(event) {
+
+      // координаты поля относительно окна
+      var fieldCoords = this.getBoundingClientRect();
+
+      // координаты левого-верхнего внутреннего угла поля
+      var fieldInnerCoords = {
+        top: fieldCoords.top + field.clientTop,
+        left: fieldCoords.left + field.clientLeft
+      };
+
+      // разместить по клику,
+      // но сдвинув относительно поля (т.к. position:relative)
+      // и сдвинув на половину ширины/высоты
+      // (!) используются координаты относительно окна clientX/Y, как и в fieldCoords
+      var ballCoords = {
+        top: event.clientY - fieldInnerCoords.top - ball.clientHeight / 2,
+        left: event.clientX - fieldInnerCoords.left - ball.clientWidth / 2
+      };
+
+      // вылезает за верхнюю границу - разместить по ней
+      if (ballCoords.top < 0) ballCoords.top = 0;
+
+      // вылезает за левую границу - разместить по ней
+      if (ballCoords.left < 0) ballCoords.left = 0;
 
 
-<canvas id="canvas" width="1200" height="500"></canvas>
+      // вылезает за правую границу - разместить по ней
+      if (ballCoords.left + ball.clientWidth > field.clientWidth) {
+        ballCoords.left = field.clientWidth - ball.clientWidth;
+      }
 
-   <script>
+      // вылезает за нижнюю границу - разместить по ней
+      if (ballCoords.top + ball.clientHeight > field.clientHeight) {
+        ballCoords.top = field.clientHeight - ball.clientHeight;
+      }
 
-     var Ball = function () {
-        this.x = 600;
-        this.y = 350;
-        this.xSpeed = -2;
-        this.ySpeed = 3;
- 
-        };
-
-        var circle = function (x, y, radius, fillCircle) {
-            ctx.beginPath();
-            ctx.arc(x, y, radius, 0, Math.PI * 2, false);
-            if (fillCircle) {
-                ctx.fill();
-            }
-            else {
-                ctx.stroke();
-            }
-        };
-
-        Ball.prototype.draw = function () {
-            circle(this.x, this.y, 15, true);
-        };
-
-        Ball.prototype.move = function () {
-            this.x += this.xSpeed;
-            this.y += this.ySpeed;
-        };
-
-        Ball.prototype.checkCollision = function () {
-            if (this.x < 0 || this.x > width) {
-                this.xSpeed = -this.xSpeed;
-            }
-            if (this.y < 0 || this.y > height) {
-                this.ySpeed = -this.ySpeed;
-            }
-        };
-
-        var centralCircle = document.getElementById("centralCircle");
-
-        var canvas = document.getElementById("canvas");
-            var ctx = canvas.getContext("2d");
-            var ball = new Ball();
-            ball.draw();
-            var width = canvas.width;
-            var height = canvas.height;
-
-        window.onclick = function(){          
-                setInterval(function () {
-                    ctx.clearRect(0, 0, width, height);
-                    ball.draw();
-                    ball.move();
-                    ball.checkCollision();
-                    ctx.strokeRect(0, 0, width, height);
-                 }, 30);         
-        }
-
-   </script>
-
-
-<!-- 
-<script src="./Тестовое задание_files/jquery-2.2.4.min.js.Без названия" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-<canvas id="canvas" width="900" height="900"></canvas>
-
-
-<script>
- 
-// for (var x = 0; x < $("body").width(); x += 60) {
-// for (var y = 0; y < $("body").height(); y += 60) {
-$("body").append("<div class='circle-shadow'></div>");
-$("body").append("<div class='circle' data-x='" + 950 + "' data-y='" + 500+ "' style='top:" + 0 + "px;left:" + 0 + "px'></div>");
-// }
-// }
- 
-$(window).on("mousemove", function (document) {
-    $(".circle").each(function (i) {
-        var circle = $(".circle:eq(" + i + ")"),
-        width = - circle.width(),
-        x0 = circle.data("x") + width / 2,
-        y0 = circle.data("y") + width / 2,
-        dx = document.clientX - x0,
-        dy = document.clientY - y0;
-    Math.sqrt(dx * dx + dy * dy) < circle.width() ?
-    (function () {
-        circle.css({
-        left: x0 - dx - width / 2 + "px",
-        top: y0 - dy - width / 2 + "px"
-        });
-    })() :
-    (function () {
-        circle.css({
-        left: x0 - width / 2 + "px",
-        top: y0 - width / 2 + "px"
-        });
-    })();
-    });
-});
-
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
-
-var y = 10;
-var x = 250;
-
-function drawBall(){
-    ctx.clearRect(0,0,900,900);
-    y += 1;
-    ctx.fillStyle="black";
-
-    ctx.beginPath();
-    ctx.arc(x,y,30,0,Math.PI*2,true);
-
-    ctx.closePath();
-    ctx.fill();
-
-    setInterval(drawBall,10);
-}
-
-drawBall();
-
-</script> -->
+      ball.style.left = ballCoords.left + 'px';
+      ball.style.top = ballCoords.top + 'px';
+    }
+  </script>
 
 </body>
 
